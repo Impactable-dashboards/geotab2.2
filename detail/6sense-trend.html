@@ -93,6 +93,18 @@ tbody tr:hover{background:rgba(27,155,209,.03);}
 </style>
 </head>
 <body>
+<div id="impl-gate" style="position:fixed;inset:0;z-index:2147483647;background:#0A0A0C;display:flex;align-items:center;justify-content:center;padding:24px;font-family:'Inter',system-ui,sans-serif;">
+  <div style="background:#15151A;border:1px solid #22222A;border-radius:4px;padding:52px 56px;max-width:400px;width:100%;text-align:center;">
+    <div style="font-family:'Archivo Black','Inter',sans-serif;font-size:26px;font-weight:800;color:#F4F1EA;margin-bottom:4px;">impact<span style="color:#1B9BD1">able</span></div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#C8C4B8;margin-bottom:40px;opacity:.6;">Geotab · Operating Room</div>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#C8C4B8;opacity:.5;margin-bottom:14px;">Access Password</div>
+    <input type="password" id="impl-pw" style="width:100%;background:#0A0A0C;border:1px solid #22222A;border-radius:2px;padding:15px 18px;font-size:16px;color:#F4F1EA;outline:none;margin-bottom:12px;letter-spacing:.12em;text-align:center;" onkeydown="if(event.key==='Enter')implChk()">
+    <button onclick="implChk()" style="width:100%;background:#1B9BD1;border:none;border-radius:2px;padding:15px;font-size:11px;font-weight:700;color:#fff;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.18em;text-transform:uppercase;">Enter →</button>
+    <div id="impl-err" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#C4521F;margin-top:12px;display:none;">Incorrect password</div>
+  </div>
+</div>
+<script>(function(){var H='cbba7f209d8529e80a21be0d6feec3d3cefee93261d88be5dbd2bb62307b075f';function sh(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(h){return Array.from(new Uint8Array(h)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');});}window.implChk=function(){sh(document.getElementById('impl-pw').value).then(function(h){if(h===H){try{sessionStorage.setItem('implab','1');}catch(e){}var g=document.getElementById('impl-gate');if(g)g.parentNode.removeChild(g);}else{var e=document.getElementById('impl-err');if(e)e.style.display='block';var p=document.getElementById('impl-pw');p.value='';p.focus();}});};try{if(sessionStorage.getItem('implab')==='1'){var g=document.getElementById('impl-gate');if(g)g.parentNode.removeChild(g);}else{var p=document.getElementById('impl-pw');if(p)p.focus();}}catch(e){}})();</script>
+
 <div id="__implab_nav" style="position:sticky;top:0;z-index:9999;background:rgba(10,10,12,.96);backdrop-filter:blur(12px);border-bottom:1px solid #22222A;padding:0 28px;display:flex;align-items:center;height:46px;font-family:'Inter',sans-serif">
   <a href="/" style="display:flex;align-items:center;gap:8px;text-decoration:none;border-right:1px solid #22222A;padding-right:16px;margin-right:16px;flex-shrink:0">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="opacity:.5"><path d="M9 11.5L4.5 7 9 2.5" stroke="#C8C4B8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
