@@ -487,7 +487,7 @@ var HASH='cbba7f209d8529e80a21be0d6feec3d3cefee93261d88be5dbd2bb62307b075f';
 function sha256(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(h){return Array.from(new Uint8Array(h)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');});}
 function showRoom(){document.getElementById('gate').style.display='none';document.getElementById('room').style.display='block';}
 function checkPw(){sha256(document.getElementById('pw').value).then(function(h){if(h===HASH){try{sessionStorage.setItem('implab','1');}catch(e){}showRoom();}else{var e=document.getElementById('err');e.style.display='block';document.getElementById('pw').value='';document.getElementById('pw').focus();}});}
-try{if(sessionStorage.getItem('implab')==='1')showRoom();else document.getElementById('pw').focus();}catch(e){document.getElementById('pw').focus();}
+showRoom();
 </script>
 </body>
 </html>
