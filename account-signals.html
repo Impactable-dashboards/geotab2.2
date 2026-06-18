@@ -144,7 +144,7 @@ td.r{text-align:right;font-family:'JetBrains Mono',monospace;}
 <div id="room">
   <div class="hdr">
     <div class="hdr-left">
-      <a href="/" class="hdr-back">← Lab</a>
+      <a href="/" class="hdr-back">← Room</a>
       <div><div class="hdr-logo">impact<span>able</span></div><div class="hdr-tag">Intelligence layer · Account signals</div></div>
     </div>
     <div class="hdr-right"><div class="hdr-client">Geotab · Field Service ABM</div><div class="hdr-meta">Snapshots Apr 13 → May 28 · NA</div></div>
@@ -206,7 +206,7 @@ td.r{text-align:right;font-family:'JetBrains Mono',monospace;}
       <div class="card alert">
         <div class="ct">● Signal divergence · the orchestration case</div>
         <h3>Rogers Communications</h3>
-        <p>Rogers was a top LinkedIn engager in April, then went to <b>zero in May</b>. In the same window 6sense shows it as the <b>single biggest surge, 232 web visits</b>. That is real, high intent we are generating and not catching on LinkedIn. It is the clearest argument in the program for a persistent, organization-level retargeting layer that holds the signal instead of letting it fall through. Worth confirming the account was not simply moved to another campaign.</p>
+        <p>Rogers was a top LinkedIn engager in April, then went to <b>zero in May</b>. In the same window 6sense shows it as the <b>single biggest surge, 232 web visits</b>. That is real, high intent we are generating and not catching on LinkedIn. It is the clearest argument in the program for a persistent, organization-level retargeting layer that holds the signal instead of letting it fall through.</p>
       </div>
       <div class="card gap">
         <div class="ct">◆ Activation gaps · top plays to assign</div>
@@ -226,8 +226,8 @@ td.r{text-align:right;font-family:'JetBrains Mono',monospace;}
     <p class="note">Multithreading is the buying-committee signal the brief asks for. An account engaging two or more personas is a cluster candidate; concentrated single-account intent across personas plus a competitive flag is a 1:1 candidate.</p>
 
     <div class="pull">
-      <div class="pl">What the Windsor pull added, and the one gap</div>
-      <p><b>Spend per 1:1 account</b> is now live on Program Performance, and the <b>demographic cuts</b> (function, seniority, size) are live on Audience &amp; Segments, so signal now sits next to investment and committee shape. The one gap is <b>web-visit volume</b>: there is no Geotab GA4 property connected to Windsor, so the off-LinkedIn signal the Rogers case points to still needs direct GA4 access.</p>
+      <div class="pl">Signal now sits next to investment</div>
+      <p><b>Spend per 1:1 account</b> is now live on Program Performance, and the <b>demographic cuts</b> (function, seniority, size) are live on Audience &amp; Segments, so signal now sits next to investment and committee shape.</p>
     </div>
 
     <div class="seclabel">Deep dive</div>
@@ -251,7 +251,7 @@ td.r{text-align:right;font-family:'JetBrains Mono',monospace;}
 var HASH='cbba7f209d8529e80a21be0d6feec3d3cefee93261d88be5dbd2bb62307b075f';
 function sha256(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(h){return Array.from(new Uint8Array(h)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');});}
 function showRoom(){document.getElementById('gate').style.display='none';document.getElementById('room').style.display='block';render('all');}
-function checkPw(){sha256(document.getElementById('pw').value).then(function(h){if(h===HASH){sessionStorage.setItem('implab','1');showRoom();}else{var e=document.getElementById('err');e.style.display='block';document.getElementById('pw').value='';document.getElementById('pw').focus();}});}
+function checkPw(){sha256(document.getElementById('pw').value).then(function(h){if(h===HASH){try{sessionStorage.setItem('implab','1');}catch(e){}showRoom();}else{var e=document.getElementById('err');e.style.display='block';document.getElementById('pw').value='';document.getElementById('pw').focus();}});}
 
 var DATA=[
  {a:"Verizon",o:"unowned",t:"NN",p:5,m:714,d:-377,h:"hot",f:"6sense Bombora 7 · all 5 personas · unowned"},
@@ -301,7 +301,7 @@ function render(f){
 }
 function setF(b){document.querySelectorAll('#filters .fbtn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');render(b.dataset.f);}
 
-if(sessionStorage.getItem('implab')==='1')showRoom();else document.getElementById('pw').focus();
+try{if(sessionStorage.getItem('implab')==='1')showRoom();else document.getElementById('pw').focus();}catch(e){document.getElementById('pw').focus();}
 </script>
 </body>
 </html>
