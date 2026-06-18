@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geotab · Operating Room · Impactable</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --asphalt:#0A0A0C;--concrete:#15151A;--court:#22222A;
+  --bone:#F4F1EA;--chalk:#C8C4B8;
+  --blue:#1B9BD1;--canopy:#D4FF3D;--moss:#7BAA3E;
+  --hazard:#FF5A1F;--terracotta:#C4521F;--clay:#FFB627;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--asphalt);color:var(--bone);min-height:100vh;-webkit-font-smoothing:antialiased;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(244,241,234,.025) 1px,transparent 0);background-size:4px 4px;pointer-events:none;z-index:0;}
+
+#gate{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;position:relative;z-index:2;}
+.gate-box{background:var(--concrete);border:1px solid var(--court);border-radius:4px;padding:52px 56px;max-width:400px;width:100%;text-align:center;}
+.gate-logo{font-family:'Archivo Black',sans-serif;font-size:26px;color:var(--bone);margin-bottom:4px;}
+.gate-logo span{color:var(--blue);}
+.gate-client{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--chalk);margin-bottom:40px;opacity:.6;}
+.gate-hint{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--chalk);opacity:.5;margin-bottom:14px;}
+.gate-input{width:100%;background:var(--asphalt);border:1px solid var(--court);border-radius:2px;padding:15px 18px;font-size:16px;color:var(--bone);outline:none;margin-bottom:12px;letter-spacing:.12em;text-align:center;}
+.gate-input:focus{border-color:var(--blue);}
+.gate-btn{width:100%;background:var(--blue);border:none;border-radius:2px;padding:15px;font-size:11px;font-weight:700;color:#fff;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.18em;text-transform:uppercase;}
+.gate-btn:hover{opacity:.85;}
+.gate-err{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--terracotta);margin-top:12px;display:none;}
+
+#room{display:none;position:relative;z-index:2;}
+.hdr{border-bottom:1px solid var(--court);padding:16px 40px;display:flex;justify-content:space-between;align-items:center;background:rgba(10,10,12,.95);backdrop-filter:blur(12px);position:sticky;top:0;z-index:100;}
+.hdr-left{display:flex;align-items:center;gap:14px;}
+.hdr-logo{font-family:'Archivo Black',sans-serif;font-size:17px;color:var(--bone);}
+.hdr-logo span{color:var(--blue);}
+.hdr-tag{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--chalk);opacity:.45;margin-top:3px;}
+.hdr-right{text-align:right;}
+.hdr-client{font-size:14px;font-weight:600;}
+.hdr-meta{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--chalk);opacity:.4;margin-top:3px;}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 40px;}
+.intro{padding:52px 0 12px;}
+.eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--blue);margin-bottom:16px;display:flex;align-items:center;gap:9px;}
+.eyebrow::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--blue);}
+h1{font-family:'Archivo Black',sans-serif;font-size:52px;letter-spacing:-.03em;text-transform:uppercase;line-height:.96;}
+.sub{font-size:16.5px;color:var(--chalk);max-width:780px;margin-top:20px;line-height:1.65;}
+
+.frontdoor{display:block;text-decoration:none;margin:34px 0 8px;background:linear-gradient(100deg,rgba(27,155,209,.14),rgba(27,155,209,.02));border:1px solid rgba(27,155,209,.3);border-radius:5px;padding:28px 32px;transition:all .18s;}
+.frontdoor:hover{border-color:var(--blue);transform:translateX(3px);}
+.fd-top{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);margin-bottom:10px;}
+.fd-h{font-family:'Archivo Black',sans-serif;font-size:24px;color:var(--bone);letter-spacing:-.01em;}
+.fd-p{font-size:14px;color:var(--chalk);margin-top:8px;line-height:1.55;max-width:680px;}
+.fd-arrow{float:right;color:var(--blue);font-size:22px;margin-top:-44px;}
+
+.layerlbl{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--chalk);padding:40px 0 4px;display:flex;align-items:center;gap:12px;}
+.layerlbl b{color:var(--bone);font-weight:700;}
+.layerlbl .who{color:var(--chalk);opacity:.55;font-weight:400;}
+.layerlbl::after{content:'';flex:1;height:1px;background:var(--court);}
+.layerdesc{font-size:13.5px;color:var(--chalk);opacity:.8;margin:10px 0 18px;max-width:760px;line-height:1.55;}
+
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+.surf{display:block;text-decoration:none;background:var(--concrete);border:1px solid var(--court);border-radius:5px;padding:24px 26px;transition:all .18s;position:relative;}
+.surf.live:hover{border-color:var(--canopy);transform:translateY(-2px);}
+.surf.soon{opacity:.62;}
+.surf.soon:hover{opacity:.8;}
+.surf .pill{position:absolute;top:22px;right:24px;font-family:'JetBrains Mono',monospace;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:2px;}
+.pill.l{background:rgba(123,170,62,.18);color:var(--canopy);}
+.pill.b{background:rgba(34,34,42,.9);color:var(--chalk);}
+.pill.p{background:rgba(27,155,209,.16);color:var(--blue);}
+.surf .sh{font-family:'Archivo Black',sans-serif;font-size:19px;color:var(--bone);letter-spacing:-.01em;margin-bottom:9px;padding-right:70px;}
+.surf .sp{font-size:13px;color:var(--chalk);line-height:1.55;}
+.surf .smeta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--chalk);opacity:.5;margin-top:14px;}
+
+.orch{display:block;text-decoration:none;margin-top:14px;background:var(--concrete);border:1px solid var(--court);border-left:3px solid var(--canopy);border-radius:0 5px 5px 0;padding:24px 28px;transition:all .18s;}
+.orch:hover{border-color:var(--canopy);}
+.orch .sh{font-family:'Archivo Black',sans-serif;font-size:20px;color:var(--bone);}
+.orch .sp{font-size:13.5px;color:var(--chalk);margin-top:8px;line-height:1.55;max-width:720px;}
+
+.foundation{margin:44px 0 8px;background:var(--concrete);border:1px solid var(--court);border-radius:5px;padding:28px 32px;}
+.foundation .fl{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);margin-bottom:14px;}
+.model{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:16px;}
+.token{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--bone);background:var(--asphalt);border:1px solid var(--court);border-radius:3px;padding:9px 15px;}
+.token .x{color:var(--blue);font-weight:700;}
+.times{color:var(--chalk);opacity:.4;font-size:16px;}
+.foundation p{font-size:13.5px;color:var(--chalk);line-height:1.6;max-width:780px;}
+.foundation p b{color:var(--bone);font-weight:600;}
+
+.foot{border-top:1px solid var(--court);padding:24px 40px;display:flex;justify-content:space-between;align-items:center;margin-top:52px;}
+.foot-logo{font-family:'Archivo Black',sans-serif;font-size:14px;}.foot-logo span{color:var(--blue);}
+.foot-txt{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--chalk);opacity:.35;margin-top:3px;}
+.foot-badge{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);border:1px solid rgba(27,155,209,.25);padding:6px 13px;border-radius:2px;}
+
+@media(max-width:880px){
+  .hdr,.foot{padding:14px 20px;}.wrap{padding:0 20px;}
+  h1{font-size:34px;}.grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="gate-box">
+    <div class="gate-logo">impact<span>able</span></div>
+    <div class="gate-client">Geotab · Operating Room</div>
+    <div class="gate-hint">Access Password</div>
+    <input type="password" id="pw" class="gate-input" placeholder="········" onkeydown="if(event.key==='Enter')checkPw()">
+    <button class="gate-btn" onclick="checkPw()">Enter →</button>
+    <div class="gate-err" id="err">Incorrect password</div>
+  </div>
+</div>
+
+<div id="room">
+  <div class="hdr">
+    <div class="hdr-left"><div><div class="hdr-logo">impact<span>able</span></div><div class="hdr-tag">Geotab Field Service ABM · Operating Room</div></div></div>
+    <div class="hdr-right"><div class="hdr-client">Geotab</div><div class="hdr-meta">Living system · weekly cadence</div></div>
+  </div>
+
+  <div class="wrap">
+    <div class="intro">
+      <div class="eyebrow">The operating room</div>
+      <h1>The system<br>beneath the review</h1>
+      <p class="sub">The Executive Review makes the argument at a point in time. This is the living system that runs underneath it: one signal model, read two ways. Marketing works the analysis layer to find the accounts, clusters, and movement worth acting on. The field works the activation layer to see their own accounts, the assigned play, and who to reach first. Same data, different altitude.</p>
+    </div>
+
+    <a class="frontdoor" href="/executive">
+      <div class="fd-arrow">→</div>
+      <div class="fd-top">◆ Start here · the board-level argument</div>
+      <div class="fd-h">Executive Review</div>
+      <div class="fd-p">Where you are, what is working, what we have learned, and the path we recommend. The point-in-time strategic case for the next chapter.</div>
+    </a>
+
+    <div class="layerlbl"><b>Intelligence layer</b> <span class="who">· for marketing · queryable analysis</span></div>
+    <p class="layerdesc">The full base, filterable. Read the signal, spot the multithreaded clusters and concentrated 1:1 candidates, watch period-over-period movement, and decide what to scale and what to cut.</p>
+    <div class="grid">
+      <a class="surf live" href="/account-signals">
+        <div class="pill l">Live</div>
+        <div class="sh">Account Signals</div>
+        <div class="sp">Heat-ranked leaderboard, movement, multithreading, and competitive flags across the named targets. The spine surface.</div>
+        <div class="smeta">27 of 39 engaging · 257 multithreaded · verified spine</div>
+      </a>
+      <a class="surf live" href="/program">
+        <div class="pill l">Live</div>
+        <div class="sh">Program Performance</div>
+        <div class="sp">The funnel by stage and region, engagement by account, and investment where the data is clean. Structure standing, spend slots pending the pull.</div>
+        <div class="smeta">Verified · funnel, region &amp; 1:1 spend</div>
+      </a>
+      <a class="surf live" href="/segments">
+        <div class="pill l">Live</div>
+        <div class="sh">Audience &amp; Segments</div>
+        <div class="sp">Persona depth and the demographic cuts: function, seniority, company size. Operations leads today, with Safety and Risk the net-new committee.</div>
+        <div class="smeta">Verified · NA function, seniority, size</div>
+      </a>
+      <a class="surf live" href="/creative">
+        <div class="pill l">Live</div>
+        <div class="sh">Message &amp; Creative</div>
+        <div class="sp">What resonates and where the white space is. Cost-savings and outcome angles beat brand. Performance detail pending the Campaign Manager export.</div>
+        <div class="smeta">Needs · creative export from the team</div>
+      </a>
+    </div>
+
+    <div class="layerlbl"><b>Field layer</b> <span class="who">· for sales · no login, role-scoped</span></div>
+    <p class="layerdesc">No analysis, no clutter. A rep opens it and sees their own named accounts, the play assigned to each, who is moving, and who to reach before a competitor does. Actionable in under five minutes.</p>
+    <div class="grid">
+      <a class="surf live" href="/field">
+        <div class="pill l">Live</div>
+        <div class="sh">My Accounts</div>
+        <div class="sp">Per-rep view scoped to Zach or Onur: assigned accounts, current play, status, and the next move. Built on the same scored spine.</div>
+        <div class="smeta">Next · Clay decision-maker enrichment</div>
+      </a>
+      <a class="surf live" href="/top25">
+        <div class="pill l">Live</div>
+        <div class="sh">Top 25 Exec Prep</div>
+        <div class="sp">The escalation tier. One card per priority account: signal, committee depth, competitive flag, and the talking points for the call.</div>
+        <div class="smeta">Tiered · all → Top 100 → Top 25</div>
+      </a>
+    </div>
+
+    <a class="orch" href="/orchestration">
+      <div class="sh">The Orchestration Model →</div>
+      <div class="sp">How the channels connect into one system: LinkedIn as the qualify-and-orchestrate hub, search capturing in-market demand, the always-on layer holding every signal, and the path from fragmented execution to measured demand. The strategy that ties the surfaces together.</div>
+    </a>
+
+    <div class="foundation">
+      <div class="fl">● One model underneath all of it</div>
+      <div class="model">
+        <span class="token">Account</span><span class="times">×</span>
+        <span class="token">Persona</span><span class="times">×</span>
+        <span class="token">Topic</span><span class="times">×</span>
+        <span class="token">Time</span>
+        <span class="times">→</span>
+        <span class="token"><span class="x">scored signal</span></span>
+      </div>
+      <p>Every surface above is a different view of the same scored model. <b>Leadership</b> sees it rolled up by region and segment. <b>Marketing</b> sees it as a filterable leaderboard. <b>The field</b> sees only their own accounts. Build once, read many ways. The pulls add depth to the model; they do not change its shape.</p>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div><div class="foot-logo">impact<span>able</span></div><div class="foot-txt">Geotab · Operating Room · Confidential</div></div>
+    <div class="foot-badge">LinkedIn Marketing Partner</div>
+  </div>
+</div>
+
+<script>
+var HASH='cbba7f209d8529e80a21be0d6feec3d3cefee93261d88be5dbd2bb62307b075f';
+function sha256(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(h){return Array.from(new Uint8Array(h)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');});}
+function showRoom(){document.getElementById('gate').style.display='none';document.getElementById('room').style.display='block';}
+function checkPw(){sha256(document.getElementById('pw').value).then(function(h){if(h===HASH){try{sessionStorage.setItem('implab','1');}catch(e){}showRoom();}else{var e=document.getElementById('err');e.style.display='block';document.getElementById('pw').value='';document.getElementById('pw').focus();}});}
+try{if(sessionStorage.getItem('implab')==='1')showRoom();else document.getElementById('pw').focus();}catch(e){document.getElementById('pw').focus();}
+</script>
+</body>
+</html>
