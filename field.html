@@ -11,6 +11,9 @@
   --bone:#F4F1EA;--chalk:#C8C4B8;
   --blue:#1B9BD1;--blue-soft:#5BB8E0;--canopy:#D4FF3D;--moss:#7BAA3E;
   --hazard:#FF5A1F;--terracotta:#C4521F;--clay:#FFB627;
+  /* ABM rep-tab vars (from /abm :root; names do not collide with field's) */
+  --s1:#15151A;--s2:#22222A;--border:#2E2E38;--text:#F4F1EA;--muted:#8C8A82;
+  --blue2:#5BB8E0;--green2:#D4FF3D;--red:#FF5A1F;--zach:#5BB8E0;--onur:#FFB627;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Inter',sans-serif;background:var(--asphalt);color:var(--bone);min-height:100vh;-webkit-font-smoothing:antialiased;}
@@ -112,6 +115,56 @@ h1{font-family:'Archivo Black',sans-serif;font-size:46px;letter-spacing:-.03em;t
   .hdr,.foot{padding:14px 20px;}.wrap{padding:0 20px;}
   h1{font-size:32px;}.fcards{grid-template-columns:1fr;}
 }
+
+/* ===== ABM REP-TAB UI (ported from /abm) ===== */
+  .ds{font-size:9px;font-weight:700;padding:2px 5px;border-radius:3px;white-space:nowrap;}
+  .ds75{color:#2ecc9a;background:rgba(15,168,118,.15);}
+  .ds50{color:#5ec8e8;background:rgba(30,143,181,.15);}
+  .ds30{color:#fbbf24;background:rgba(212,154,10,.15);}
+  .ds20{color:#FFB627;background:rgba(194,106,20,.15);}
+  .ds10{color:#94a3b8;background:rgba(148,163,184,.1);}
+  .dsp{color:var(--muted);background:rgba(148,163,184,.07);}
+  .rep-container{border:1px solid var(--border);border-radius:12px;overflow:hidden;}
+  .rep-switcher{display:flex;background:var(--s1);border-bottom:1px solid var(--border);}
+  .rep-btn{flex:1;padding:14px 20px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;background:none;border:none;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s;}
+  .rep-btn.z.active{color:var(--zach);border-bottom-color:var(--zach);background:rgba(91,184,224,.05);}
+  .rep-btn.o.active{color:var(--onur);border-bottom-color:var(--onur);background:rgba(251,146,60,.05);}
+  .rep-btn:hover.z{color:var(--zach);}
+  .rep-btn:hover.o{color:var(--onur);}
+  .rep-panel{display:none;padding:24px;}
+  .rep-panel.active{display:block;}
+  .rep-header{display:grid;grid-template-columns:auto 1fr auto;gap:24px;align-items:center;margin-bottom:24px;}
+  .rep-avatar{width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:800;}
+  .rep-avatar.z{background:rgba(91,184,224,.15);color:var(--zach);}
+  .rep-avatar.o{background:rgba(251,146,60,.15);color:var(--onur);}
+  .rep-name{font-size:18px;font-weight:800;color:#fff;}
+  .rep-role{font-size:11px;color:var(--muted);margin-top:2px;}
+  .rep-stats{display:flex;gap:16px;}
+  .rep-stat{text-align:center;}
+  .rep-sv{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700;line-height:1;}
+  .rep-sl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
+  .rep-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+  .rep-card{background:var(--s1);border:1px solid var(--border);border-radius:10px;padding:16px;}
+  .rep-card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;}
+  .rep-card-t{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);}
+  .rep-acct-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+  .rep-acct{display:flex;justify-content:space-between;align-items:center;padding:6px 8px;border-radius:6px;background:var(--s2);border:1px solid var(--border);}
+  .rep-acct-n{font-size:11px;font-weight:600;color:#fff;}
+  .rep-acct-r{display:flex;align-items:center;gap:5px;}
+  .rep-bullets{list-style:none;display:flex;flex-direction:column;gap:5px;}
+  .rep-bullets li{font-size:11px;color:var(--muted);padding-left:14px;position:relative;line-height:1.45;}
+  .rep-bullets li::before{content:'→';position:absolute;left:0;color:var(--blue2);font-size:9px;top:1px;}
+  .rep-bullets li strong{color:var(--text);}
+  .rep-action-list{list-style:none;display:flex;flex-direction:column;gap:6px;}
+  .rep-action{background:var(--s2);border:1px solid var(--border);border-radius:8px;padding:12px;display:grid;grid-template-columns:auto 1fr;gap:10px;}
+  .rep-action.urg{border-color:rgba(255,90,31,.4);}
+  .rep-action.hi{border-color:rgba(251,146,60,.3);}
+  .ra-num{font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--muted);margin-top:1px;}
+  .ra-title{font-size:12px;font-weight:700;color:#fff;margin-bottom:3px;}
+  .ra-body{font-size:11px;color:var(--muted);line-height:1.45;}
+@media(max-width:880px){
+  .rep-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
@@ -143,17 +196,14 @@ h1{font-family:'Archivo Black',sans-serif;font-size:46px;letter-spacing:-.03em;t
       <p class="sub">Your named accounts, the play assigned to each, who is moving, and who to reach before a competitor does. No analysis, no clutter. Pick your name, see your book, act on the one or two that matter today.</p>
     </div>
 
-    <div class="repsel">
-      <span class="lbl">Viewing as</span>
-      <button class="rbtn on" data-rep="Zach" onclick="setRep(this)">Zach</button>
-      <button class="rbtn" data-rep="Onur" onclick="setRep(this)">Onur</button>
+    <div class="rep-container">
+      <div class="rep-switcher">
+        <button class="rep-btn z active" onclick="switchRep(event,'zach')">Zach Crocombe — BDE</button>
+        <button class="rep-btn o" onclick="switchRep(event,'onur')">Onur Aksan — BDE</button>
+      </div>
+      <div class="rep-panel active" id="rep-panel-zach"></div>
+      <div class="rep-panel" id="rep-panel-onur"></div>
     </div>
-
-    <div class="seclabel">Reach first</div>
-    <div class="reach" id="reach"></div>
-
-    <div class="seclabel" id="bookLabel">Your book</div>
-    <div class="fcards" id="cards"></div>
 
     <div class="seclabel">Unowned, high signal · flag for assignment</div>
     <div class="assign">
@@ -182,59 +232,151 @@ h1{font-family:'Archivo Black',sans-serif;font-size:46px;letter-spacing:-.03em;t
 <script>
 var HASH='cbba7f209d8529e80a21be0d6feec3d3cefee93261d88be5dbd2bb62307b075f';
 function sha256(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(h){return Array.from(new Uint8Array(h)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');});}
-function showRoom(){document.getElementById('gate').style.display='none';document.getElementById('room').style.display='block';render('Zach');}
+function showRoom(){document.getElementById('gate').style.display='none';document.getElementById('room').style.display='block';buildRepPanel(ZACH,'rep-panel-zach');buildRepPanel(ONUR,'rep-panel-onur');}
 function checkPw(){sha256(document.getElementById('pw').value).then(function(h){if(h===HASH){try{sessionStorage.setItem('implab','1');}catch(e){}showRoom();}else{var e=document.getElementById('err');e.style.display='block';document.getElementById('pw').value='';document.getElementById('pw').focus();}});}
-try{if(sessionStorage.getItem('implab')==='1')showRoom();else document.getElementById('pw').focus();}catch(e){document.getElementById('pw').focus();}
 
-var BOOK={
- Zach:{
-   reach:{a:"Johnson & Johnson",t:"Protect the deal. J&J is in active negotiation and a Samsara comparison surge just flagged it. Keep aircover on the committee and reinforce the battlecard this week."},
-   accts:[
-    {a:"Johnson & Johnson",heat:"hot",p:5,d:99,stage:"Marquee · active negotiation",next:"Reinforce the competitive battlecard and hold aircover on the full committee.",flag:"Competitive surge history. Treat as a deal to protect."},
-    {a:"Charter Communications",heat:"hot",p:5,d:68,stage:"All 5 personas · climbing",next:"Open a 1:1 into the safety owner while the whole committee is lit.",flag:"Kamal Masih is a known contact (workbook)."},
-    {a:"Labcorp",heat:"hot",p:5,d:17,stage:"CARB compliance surge",next:"Lead with safety and compliance. CARB is the wedge into the committee.",flag:""},
-    {a:"Compass Group",heat:"warm",p:1,d:138,stage:"Newly active",next:"Qualify the fit and find the operations owner. 20% collaboration, moving fast.",flag:""},
-    {a:"Comcast",heat:"warm",p:1,d:-20,stage:"Camera-focused expansion",next:"Bring the Safety and Compliance committee in on the camera angle.",flag:""},
-    {a:"TELUS",heat:"watch",p:0,d:-1709,stage:"High base, declining",next:"Down 1,709. Check what lapsed before it goes fully dark.",flag:""},
-    {a:"Brightspeed",heat:"watch",p:1,d:-20,stage:"Early, slipping",next:"10% engaged, single persona, drifting down. Keep on nurture.",flag:""},
-    {a:"Everon",heat:"watch",p:1,d:8,stage:"Early riser",next:"Small but rising. Watch for a second persona before acting.",flag:""},
-    {a:"Amgen",heat:"watch",p:0,d:-2,stage:"Low signal",next:"Flat and quiet. Nurture only, no 1:1 yet.",flag:""}
-   ]
- },
- Onur:{
-   reach:{a:"Allied Universal",t:"Reach first. All 5 personas, a 7-week 6sense surge, and never a 1:1 activated. This is the widest intent-to-action gap in the book. Open the conversation now."},
-   accts:[
-    {a:"Allied Universal",heat:"hot",p:5,d:182,stage:"7-week surge · no 1:1 yet",next:"Open the 1:1 today. Widest intent-to-action gap in the book.",flag:"Kristi Fearn is a known contact (workbook)."},
-    {a:"Cintas",heat:"hot",p:2,d:508,stage:"Strongest riser this period",next:"Strike while it peaks. Confirm the committee and push for a meeting.",flag:""},
-    {a:"Rogers Communications",heat:"hot",p:0,d:-1910,stage:"Signal divergence",next:"LinkedIn to 0 while 6sense surged 232 visits. Confirm if it moved, then re-engage the web intent.",flag:"The orchestration case. High web intent we are not catching."},
-    {a:"TruGreen",heat:"warm",p:3,d:52,stage:"1:1 live · 10% engaged",next:"Push the live 1:1 toward a meeting.",flag:""},
-    {a:"Walt Disney Imagineering",heat:"warm",p:3,d:8,stage:"Engaging, 3 personas",next:"Qualify the buying center. 10% engaged and steady.",flag:""},
-    {a:"Apex Service Partners",heat:"watch",p:1,d:-76,stage:"75% negotiations",next:"Late stage but signal down 76. Confirm true deal status.",flag:""},
-    {a:"Windstream",heat:"watch",p:2,d:0,stage:"Net-new committee",next:"Two personas formed but not yet active. Activate the committee.",flag:""},
-    {a:"Groundworks",heat:"watch",p:1,d:13,stage:"Early riser",next:"Small and rising. Watch for breadth.",flag:""},
-    {a:"Vestis",heat:"watch",p:1,d:14,stage:"Newly active",next:"Single persona, just lit up. Watch.",flag:""},
-    {a:"Alsco Uniforms",heat:"watch",p:1,d:1,stage:"Flat",next:"Single persona, flat. Nurture.",flag:""}
-   ]
- }
+// ===== ABM rep-tab data + render (ported verbatim from /abm) =====
+var P_LABELS={P1:'Safety & Compliance',P2:'Operations',P3:'Routing / Dispatch',P4:'Competitor (Samsara)',P5:'Deal Acceleration'};
+
+var SS={
+  'Johnson & Johnson':       {b:[4,1,2,2,3,2,3],s:[1,2,1,0,0,15,3], t:['Intelligent Routing','Dash Cam','Fleet Management']},
+  'Verizon':                 {b:[4,4,4,8,8,7,4],s:[0,0,0,0,5,0,8],  t:['Cost Savings','Dash Cam','Driver Risk Assessment','Fleet Management']},
+  'Allied Universal':        {b:[3,2,4,5,6,7,6],s:[0,0,0,0,0,0,0],  t:['Electric Fleet Vehicles','Asset Tracking','Dash Cam','Fleet Maintenance','Driver Risk Assessment','Fuel Management']},
+  'Charter Communications':  {b:[1,3,1,1,2,3,3],s:[15,5,8,5,5,4,3], t:['Dash Cam','Fuel Management','Vehicle Tracking']},
+  'Walt Disney Imagineering':{b:[2,3,2,3,4,3,3],s:[0,1,27,0,1,1,5], t:['Electric Fleet Vehicles','Dash Cam','Vehicle Tracking']},
+  'Cintas':                  {b:[0,0,0,1,3,3,3],s:[2,2,2,0,0,0,0],  t:['Asset Tracking','Dash Cam','Fuel Management']},
+  'Labcorp':                 {b:[1,1,4,3,7,3,5],s:[0,2,0,0,0,0,2],  t:['Cost Savings','Job Scheduling','Electric Fleet Vehicles','Dash Cam','Fuel Management']},
+  'Eli Lilly and Company':   {b:[1,0,2,3,2,1,3],s:[0,0,0,1,0,1,2],  t:['Driver Risk Assessment','Asset Tracking','Fuel Management']},
+  'TruGreen':                {b:[1,1,0,2,2,3,2],s:[0,0,0,0,0,0,0],  t:['Dash Cam','Vehicle Tracking']},
+  'BrightView Landscapes':   {b:[0,1,1,2,2,1,2],s:[0,0,0,0,0,0,0],  t:['Cost Savings','Dash Cam']},
+  'Rogers Communications':   {b:[2,0,1,1,1,1,0],s:[11,11,24,8,8,12,17],t:[]},
+  'Mary Kay':                {b:[0,0,0,3,1,0,2],s:[0,0,0,0,0,0,0],  t:['Dash Cam','Vehicle Tracking']},
+  'Brightspeed':             {b:[0,0,0,1,1,0,2],s:[0,0,0,0,0,0,0],  t:['Dash Cam','Fuel Management']},
+  'Frontier Internet':       {b:[1,0,0,3,5,0,0],s:[5,13,13,2,0,0,0],t:[]},
+  'Wrench Group':            {b:[0,0,0,0,0,0,0],s:[0,0,0,0,0,0,0],  t:['Competitors Page','PepsiCo Case Study','Cost Blog']},
 };
 
-function dots(n){var s='<span class="dots">';for(var i=1;i<=5;i++){s+='<span class="dot '+(i<=n?(n===5?'on5':'on'):'')+'"></span>';}return s+'</span>';}
-function mv(d){if(d>5)return '<span class="mv up">▲ +'+d.toLocaleString()+'</span>';if(d<-5)return '<span class="mv dn">▼ '+d.toLocaleString()+'</span>';return '<span class="mv fl">flat</span>';}
-function render(rep){
-  var b=BOOK[rep];
-  document.getElementById('reach').innerHTML='<div class="rk">● Reach first · '+rep+'</div><h3>'+b.reach.a+'</h3><p>'+b.reach.t+'</p>';
-  document.getElementById('bookLabel').firstChild.textContent=rep+"'s book · "+b.accts.length+' accounts';
-  document.getElementById('cards').innerHTML=b.accts.map(function(c){
-    return '<div class="fcard '+c.heat+'">'+
-      '<div class="fc-top"><span class="fc-name">'+c.a+'</span><span class="heat h-'+c.heat+'">'+c.heat+'</span></div>'+
-      '<div class="fc-meta">'+dots(c.p)+'<span class="dl">'+(c.p?c.p+' persona'+(c.p>1?'s':''):'committee forming')+'</span>'+mv(c.d)+'</div>'+
-      '<div class="fc-stage">'+c.stage+'</div>'+
-      '<div class="fc-next"><span class="nlabel">Next move</span>'+c.next+'</div>'+
-      (c.flag?'<div class="fc-flag">'+c.flag+'</div>':'')+
-    '</div>';
-  }).join('');
+var HUB={
+  'Johnson & Johnson':{c:58,i:43136},'Verizon':{c:30,i:58759},'AT&T':{c:42,i:3865},
+  'Charter Communications':{c:19,i:24751},'Allied Universal':{c:3,i:225},
+  'Walt Disney Imagineering':{c:35,i:1216},'BrightView Landscapes':{c:3,i:1442},
+  'Labcorp':{c:0,i:7949},'TruGreen':{c:9,i:774},'Eli Lilly and Company':{c:15,i:1778},
+  'Comcast':{c:18,i:3207},'Cintas':{c:51,i:4086},'Alsco Uniforms':{c:6,i:1132},
+  'Groundworks':{c:3,i:387},'Frontier Internet':{c:0,i:405},
+  'Mary Kay':{c:0,i:243},'Comfort Systems USA':{c:0,i:204},
+  'Wrench Group':{c:0,i:105},'Brightspeed':{c:0,i:508},
+};
+
+var PERSONAS={
+  'Johnson & Johnson':['P1','P2','P3','P4','P5'],'Verizon':['P1','P2','P3','P4','P5'],
+  'AT&T':['P4','P5'],'Charter Communications':['P1','P2','P3','P4','P5'],
+  'Allied Universal':['P1','P2','P3','P5'],'Walt Disney Imagineering':['P2','P3','P4','P5'],
+  'BrightView Landscapes':['P1','P2','P5'],'Labcorp':['P1','P2','P3','P4','P5'],
+  'TruGreen':['P1','P4','P5'],'Eli Lilly and Company':['P4'],
+  'Frontier Internet':['P4','P5'],'Cintas':['P4','P5'],'Comcast':['P4','P5'],
+  'Comfort Systems USA':['P5'],'Mary Kay':['P5'],'Alsco Uniforms':['P5'],
+  'Groundworks':['P5'],'Rogers Communications':['P1','P2','P3'],
+  'Wrench Group':[],'Brightspeed':['P1'],
+};
+
+var DEAL={
+  'BrightView Landscapes':{stage:'75% Negotiations',cls:'ds75',pcls:'s75',fleet:17000,mrr:156582,contacts:['Pat Hunt — VP Fleet','Shayn Spingler — CIO','Jody Suiter — Dir Fleet Ops'],one2one:true,gifts:true},
+  'Apex Service Partners':{stage:'75% Negotiations',cls:'ds75',pcls:'s75',fleet:12000,mrr:216000,contacts:[],one2one:false,gifts:false},
+  'Terminix/Rentokil':{stage:'75% Negotiating',cls:'ds75',pcls:'s75',fleet:3000,mrr:40000,contacts:[],one2one:false,gifts:false},
+  'Schindler Group':{stage:'50% Pilot',cls:'ds50',pcls:'s50',fleet:3000,mrr:45000,contacts:[],one2one:false,gifts:false},
+  'Johnson & Johnson':{stage:'30% Quotation',cls:'ds30',pcls:'s30',fleet:10000,mrr:184000,contacts:['Brigitt DeMarzo'],one2one:true,gifts:false},
+  'Rollins':{stage:'30% Quotation',cls:'ds30',pcls:'s30',fleet:18000,mrr:180000,contacts:[],one2one:false,gifts:false},
+  'Compass Group':{stage:'20% Collaboration',cls:'ds20',pcls:'s20',fleet:7000,mrr:70000,contacts:[],one2one:false,gifts:false},
+  'Walt Disney Imagineering':{stage:'10% Engaged',cls:'ds10',pcls:'s10',fleet:4000,mrr:46000,contacts:[],one2one:false,gifts:false},
+  'TruGreen':{stage:'10% Engaged',cls:'ds10',pcls:'s10',fleet:9000,mrr:0,contacts:[],one2one:true,gifts:false},
+  'Allied Universal':{stage:'Prospect',cls:'dsp',pcls:'s10',fleet:7500,mrr:0,contacts:['Kristi Fearn'],one2one:false,gifts:false},
+  'Charter Communications':{stage:'Prospect',cls:'dsp',pcls:'s10',fleet:10000,mrr:0,contacts:['Kamal Masih'],one2one:false,gifts:false},
+  'Eli Lilly and Company':{stage:'Prospect',cls:'dsp',pcls:'s10',fleet:5000,mrr:0,contacts:['Raj Gautam'],one2one:false,gifts:false},
+  'Labcorp':{stage:'Prospect',cls:'dsp',pcls:'s10',fleet:7000,mrr:0,contacts:[],one2one:false,gifts:false},
+  'Verizon':{stage:'Prospect',cls:'dsp',pcls:'s10',fleet:0,mrr:0,contacts:[],one2one:false,gifts:false},
+  'Cintas':{stage:'Prospect',cls:'dsp',pcls:'s10',fleet:13500,mrr:0,contacts:[],one2one:false,gifts:false},
+};
+
+var ZACH={
+  name:'Zach Crocombe',role:'Business Development Executive',color:'z',
+  accounts:['Johnson & Johnson','BrightView Landscapes','Labcorp','Charter Communications','AT&T','Eli Lilly and Company','Comcast','Brightspeed'],
+  topMovement:'Labcorp — 5 Surge + Signals platform visit (product evaluation)',
+  whatsNew:[
+    '<strong>J&J Samsara cooling (15→3)</strong> — competitive window still warm but narrowing',
+    '<strong>Labcorp visited signals.geotab.com</strong> — this is product evaluation, not awareness browsing',
+    '<strong>BrightView recovering to 2 Surge</strong> after dip. Cost Savings + vehicle inspection keywords new',
+    '<strong>AT&T flagged as potential reseller</strong> — confirm whether engagement is direct fleet vs partner activity',
+    '<strong>Charter: Trimble surged to 46 keyword searches</strong> — evaluating telematics providers broadly',
+  ],
+  actions:[
+    {tier:'urg',title:'Labcorp — Brief to Priority 1 this week',body:'<strong>Raise to Priority 1</strong> — signals.geotab.com visit + 5 Surge is product evaluation behavior. Reach out now: lead with Job Scheduling and Cost Savings (top Bombora topics). Layer in Operation Let\'s Eat.'},
+    {tier:'urg',title:'BrightView — Complete 1:1 brief this week',body:'75% Negotiations deal with gifting live. <strong>This is the only missing activation layer at 75%.</strong> Call Pat Hunt or Shayn Spingler using gifting engagement as the opening.'},
+    {tier:'hi',title:'J&J — Follow up while window is still warm',body:'Samsara eased 15→3, not gone. EV Adoption keyword new. <strong>Call this week</strong> — lead with EV fleet readiness + FIPS advantage. Close with 60-day pilot offer.'},
+  ]
+};
+var ONUR={
+  name:'Onur Aksan',role:'Business Development Executive',color:'o',
+  accounts:['Allied Universal','TruGreen','Walt Disney Imagineering','Cintas','Frontier Internet','Rogers Communications','Alsco Uniforms','Groundworks','Wrench Group'],
+  topMovement:'Cintas — 51 hub clicks (up from 0). Campaigns are converting.',
+  whatsNew:[
+    '<strong>Cintas jumped to 51 hub clicks</strong> — P4/P5 campaigns working. Visited Field Service Buyers Guide',
+    '<strong>Allied Universal — 7th consecutive week</strong> of signal with zero activation. Now at 6 Surge',
+    '<strong>Walt Disney Imagineering — EV fleet news</strong>: CARB agreement to retire Autopia gas engines by early 2027. Net zero 2030 commitment',
+    '<strong>Wrench Group visited /geotab-vs-competitors/ + PepsiCo case study + cost blog</strong> — flag to Jen for 1:1 program decision',
+    '<strong>TruGreen routing page visit</strong> while 1:1 is live — program working correctly',
+  ],
+  actions:[
+    {tier:'urg',title:'Allied Universal — Activate brief TODAY',body:'7 weeks of signal, 0 activation. <strong>This cannot continue.</strong> Lead with Driver Risk Assessment for 7.5K security vehicle fleet. Send Operation Let\'s Eat immediately as a bridge while brief is being finalized.'},
+    {tier:'hi',title:'Cintas — Outreach while signal is peaking',body:'51 hub clicks + 3 consecutive Surge weeks + Field Service Buyers Guide visit. <strong>Reach out this week</strong> with competitive displacement (Samsara) angle for 13.5K uniform services fleet.'},
+    {tier:'hi',title:'Wrench Group — Flag to Jen for program decision',body:'Competitors page + PepsiCo case study + cost blog in one session. <strong>Legitimate field service HVAC fleet.</strong> Confirm 1:1 program inclusion before signal cools. Currently 0 impressions in hub.'},
+  ]
+};
+function buildRepPanel(rep,panelId){
+  var panel=document.getElementById(panelId);
+  var statColor=rep.color==='z'?'var(--zach)':'var(--onur)';
+  var headerHTML='<div class="rep-header"><div class="rep-avatar '+rep.color+'">'+rep.name[0]+'</div><div><div class="rep-name">'+rep.name+'</div><div class="rep-role">'+rep.role+'</div></div><div class="rep-stats">'+
+    '<div class="rep-stat"><div class="rep-sv" style="color:'+statColor+'">'+rep.accounts.length+'</div><div class="rep-sl">Accounts</div></div>';
+  var totalSurge=rep.accounts.reduce(function(s,n){return s+(SS[n]?SS[n].b[6]:0);},0);
+  var totalClicks=rep.accounts.reduce(function(s,n){return s+(HUB[n]?HUB[n].c:0);},0);
+  headerHTML+='<div class="rep-stat"><div class="rep-sv" style="color:'+statColor+'">'+totalSurge+'</div><div class="rep-sl">Total Surge</div></div>';
+  headerHTML+='<div class="rep-stat"><div class="rep-sv" style="color:'+statColor+'">'+totalClicks+'</div><div class="rep-sl">Hub Clicks</div></div></div></div>';
+
+  // Top movement callout
+  var movColor=rep.color==='z'?'rgba(91,184,224,.15)':'rgba(251,146,60,.15)';
+  var mvHTML='<div style="background:var(--s2);border:1px solid '+movColor+';border-radius:8px;padding:12px 16px;margin-bottom:16px;"><div style="font-family:\'JetBrains Mono\',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:'+(rep.color==='z'?'var(--blue2)':'var(--onur)')+';margin-bottom:4px;">⬆ Top Movement This Week</div><div style="font-size:12px;font-weight:700;color:#fff;">'+rep.topMovement+'</div></div>';
+
+  // Grid: account list + what's new
+  var gridHTML='<div class="rep-grid"><div class="rep-card"><div class="rep-card-h"><div class="rep-card-t">Your Accounts</div></div><ul class="rep-acct-list">';
+  rep.accounts.forEach(function(n){
+    var ss=SS[n]||{b:[0,0,0,0,0,0,0],s:[0,0,0,0,0,0,0]};
+    var hub=HUB[n]||{c:0,i:0};var d=DEAL[n]||{};
+    var w7=ss.b[6];var w7c=w7>=4?'var(--red)':w7>=2?'var(--blue2)':'var(--muted)';
+    var stg=d.stage&&!d.stage.includes('Prospect')?'<span class="ds '+(d.cls||'dsp')+'" style="font-size:7px">'+d.stage+'</span>':'';
+    gridHTML+='<li class="rep-acct"><div><div class="rep-acct-n">'+n+stg+'</div></div><div class="rep-acct-r"><span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:'+w7c+'">Surge:'+w7+'</span><span style="font-family:\'JetBrains Mono\',monospace;font-size:10px;color:'+(hub.c>0?'var(--green2)':'var(--muted)')+'">'+hub.c+'c</span></div></li>';
+  });
+  gridHTML+='</ul></div><div class="rep-card"><div class="rep-card-h"><div class="rep-card-t">What\'s New This Week</div></div><ul class="rep-bullets">';
+  rep.whatsNew.forEach(function(w){gridHTML+='<li>'+w+'</li>';});
+  gridHTML+='</ul></div></div>';
+
+  // Actions
+  var actHTML='<div style="margin-bottom:8px"><div style="font-family:\'JetBrains Mono\',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">What To Do Next</div><div class="rep-action-list">';
+  rep.actions.forEach(function(a,i){
+    actHTML+='<div class="rep-action '+(a.tier==='urg'?'urg':'hi')+'"><div class="ra-num">'+(i+1)+'</div><div><div class="ra-title">'+a.title+'</div><div class="ra-body">'+a.body+'</div></div></div>';
+  });
+  actHTML+='</div></div>';
+
+  panel.innerHTML=headerHTML+mvHTML+gridHTML+actHTML;
 }
-function setRep(b){document.querySelectorAll('.repsel .rbtn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');render(b.dataset.rep);}
+
+function switchRep(evt,rep){
+  document.querySelectorAll('.rep-panel').forEach(function(p){p.classList.remove('active');});
+  document.getElementById('rep-panel-'+rep).classList.add('active');
+  document.querySelectorAll('.rep-btn').forEach(function(b){b.classList.remove('active');});
+  evt.target.classList.add('active');
+}
+
+// init LAST so all data/functions are defined before showRoom runs
+try{if(sessionStorage.getItem('implab')==='1')showRoom();else document.getElementById('pw').focus();}catch(e){document.getElementById('pw').focus();}
 </script>
 </body>
 </html>

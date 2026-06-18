@@ -229,6 +229,16 @@ td.r{text-align:right;font-family:'JetBrains Mono',monospace;}
       <div class="pl">What the Windsor pull added, and the one gap</div>
       <p><b>Spend per 1:1 account</b> is now live on Program Performance, and the <b>demographic cuts</b> (function, seniority, size) are live on Audience &amp; Segments, so signal now sits next to investment and committee shape. The one gap is <b>web-visit volume</b>: there is no Geotab GA4 property connected to Windsor, so the off-LinkedIn signal the Rogers case points to still needs direct GA4 access.</p>
     </div>
+
+    <div class="seclabel">Deep dive</div>
+    <div style="background:var(--concrete);border:1px solid var(--court);border-left:3px solid var(--blue);border-radius:0 5px 5px 0;padding:22px 26px;">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.04em;color:var(--chalk);opacity:.85;margin-bottom:14px;">Full account detail and intent history.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;">
+        <a href="/detail/abm-report" style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--asphalt);border:1px solid var(--court);border-radius:4px;padding:14px 16px;text-decoration:none;color:var(--bone);font-size:13.5px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--court)'">ABM Intelligence Report <span style="color:var(--blue)">→</span></a>
+        <a href="/detail/account-hierarchy" style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--asphalt);border:1px solid var(--court);border-radius:4px;padding:14px 16px;text-decoration:none;color:var(--bone);font-size:13.5px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--court)'">LinkedIn Account Hierarchy <span style="color:var(--blue)">→</span></a>
+        <a href="/detail/6sense-trend" style="display:flex;justify-content:space-between;align-items:center;gap:10px;background:var(--asphalt);border:1px solid var(--court);border-radius:4px;padding:14px 16px;text-decoration:none;color:var(--bone);font-size:13.5px;font-weight:600;transition:border-color .15s;" onmouseover="this.style.borderColor='var(--blue)'" onmouseout="this.style.borderColor='var(--court)'">6sense Surge Trend <span style="color:var(--blue)">→</span></a>
+      </div>
+    </div>
   </div>
 
   <div class="foot">
@@ -242,7 +252,6 @@ var HASH='cbba7f209d8529e80a21be0d6feec3d3cefee93261d88be5dbd2bb62307b075f';
 function sha256(s){return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(h){return Array.from(new Uint8Array(h)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');});}
 function showRoom(){document.getElementById('gate').style.display='none';document.getElementById('room').style.display='block';render('all');}
 function checkPw(){sha256(document.getElementById('pw').value).then(function(h){if(h===HASH){sessionStorage.setItem('implab','1');showRoom();}else{var e=document.getElementById('err');e.style.display='block';document.getElementById('pw').value='';document.getElementById('pw').focus();}});}
-if(sessionStorage.getItem('implab')==='1')showRoom();else document.getElementById('pw').focus();
 
 var DATA=[
  {a:"Verizon",o:"unowned",t:"NN",p:5,m:714,d:-377,h:"hot",f:"6sense Bombora 7 · all 5 personas · unowned"},
@@ -291,6 +300,8 @@ function render(f){
   document.getElementById('rows').innerHTML=html;
 }
 function setF(b){document.querySelectorAll('#filters .fbtn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');render(b.dataset.f);}
+
+if(sessionStorage.getItem('implab')==='1')showRoom();else document.getElementById('pw').focus();
 </script>
 </body>
 </html>
