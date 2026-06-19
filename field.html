@@ -166,6 +166,7 @@ h1{font-family:'Archivo Black',sans-serif;font-size:46px;letter-spacing:-.03em;t
   .rep-grid{grid-template-columns:1fr;}
 }
 </style>
+<style id="ebr-polish">.hdr-meta{opacity:.62!important}.foot-txt{opacity:.5!important}.smeta{opacity:.72!important}.note{opacity:.72!important}.hdr-tag{opacity:.6!important}@media(max-width:760px){table{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}}</style>
 </head>
 <body>
 
@@ -198,8 +199,8 @@ h1{font-family:'Archivo Black',sans-serif;font-size:46px;letter-spacing:-.03em;t
 
     <div class="rep-container">
       <div class="rep-switcher">
-        <button class="rep-btn z active" onclick="switchRep(event,'zach')">Zach Crocombe — BDE</button>
-        <button class="rep-btn o" onclick="switchRep(event,'onur')">Onur Aksan — BDE</button>
+        <button class="rep-btn z active" onclick="switchRep(event,'zach')">Zach Crocombe, BDE</button>
+        <button class="rep-btn o" onclick="switchRep(event,'onur')">Onur Aksan, BDE</button>
       </div>
       <div class="rep-panel active" id="rep-panel-zach"></div>
       <div class="rep-panel" id="rep-panel-onur"></div>
@@ -233,20 +234,20 @@ var P_LABELS={P1:'Safety & Compliance',P2:'Operations',P3:'Routing / Dispatch',P
 
 var SS={
   'Johnson & Johnson':       {b:[4,1,2,2,3,2,3],s:[1,2,1,0,0,15,3], t:['Intelligent Routing','Dash Cam','Fleet Management']},
-  'Verizon':                 {b:[4,4,4,8,8,7,4],s:[0,0,0,0,5,0,8],  t:['Cost Savings','Dash Cam','Driver Risk Assessment','Fleet Management']},
-  'Allied Universal':        {b:[3,2,4,5,6,7,6],s:[0,0,0,0,0,0,0],  t:['Electric Fleet Vehicles','Asset Tracking','Dash Cam','Fleet Maintenance','Driver Risk Assessment','Fuel Management']},
+  'Verizon':                 {b:[4,4,4,8,8,7,4],s:[0,0,0,0,5,0,8], t:['Cost Savings','Dash Cam','Driver Risk Assessment','Fleet Management']},
+  'Allied Universal':        {b:[3,2,4,5,6,7,6],s:[0,0,0,0,0,0,0], t:['Electric Fleet Vehicles','Asset Tracking','Dash Cam','Fleet Maintenance','Driver Risk Assessment','Fuel Management']},
   'Charter Communications':  {b:[1,3,1,1,2,3,3],s:[15,5,8,5,5,4,3], t:['Dash Cam','Fuel Management','Vehicle Tracking']},
   'Walt Disney Imagineering':{b:[2,3,2,3,4,3,3],s:[0,1,27,0,1,1,5], t:['Electric Fleet Vehicles','Dash Cam','Vehicle Tracking']},
-  'Cintas':                  {b:[0,0,0,1,3,3,3],s:[2,2,2,0,0,0,0],  t:['Asset Tracking','Dash Cam','Fuel Management']},
-  'Labcorp':                 {b:[1,1,4,3,7,3,5],s:[0,2,0,0,0,0,2],  t:['Cost Savings','Job Scheduling','Electric Fleet Vehicles','Dash Cam','Fuel Management']},
-  'Eli Lilly and Company':   {b:[1,0,2,3,2,1,3],s:[0,0,0,1,0,1,2],  t:['Driver Risk Assessment','Asset Tracking','Fuel Management']},
-  'TruGreen':                {b:[1,1,0,2,2,3,2],s:[0,0,0,0,0,0,0],  t:['Dash Cam','Vehicle Tracking']},
-  'BrightView Landscapes':   {b:[0,1,1,2,2,1,2],s:[0,0,0,0,0,0,0],  t:['Cost Savings','Dash Cam']},
+  'Cintas':                  {b:[0,0,0,1,3,3,3],s:[2,2,2,0,0,0,0], t:['Asset Tracking','Dash Cam','Fuel Management']},
+  'Labcorp':                 {b:[1,1,4,3,7,3,5],s:[0,2,0,0,0,0,2], t:['Cost Savings','Job Scheduling','Electric Fleet Vehicles','Dash Cam','Fuel Management']},
+  'Eli Lilly and Company':   {b:[1,0,2,3,2,1,3],s:[0,0,0,1,0,1,2], t:['Driver Risk Assessment','Asset Tracking','Fuel Management']},
+  'TruGreen':                {b:[1,1,0,2,2,3,2],s:[0,0,0,0,0,0,0], t:['Dash Cam','Vehicle Tracking']},
+  'BrightView Landscapes':   {b:[0,1,1,2,2,1,2],s:[0,0,0,0,0,0,0], t:['Cost Savings','Dash Cam']},
   'Rogers Communications':   {b:[2,0,1,1,1,1,0],s:[11,11,24,8,8,12,17],t:[]},
-  'Mary Kay':                {b:[0,0,0,3,1,0,2],s:[0,0,0,0,0,0,0],  t:['Dash Cam','Vehicle Tracking']},
-  'Brightspeed':             {b:[0,0,0,1,1,0,2],s:[0,0,0,0,0,0,0],  t:['Dash Cam','Fuel Management']},
+  'Mary Kay':                {b:[0,0,0,3,1,0,2],s:[0,0,0,0,0,0,0], t:['Dash Cam','Vehicle Tracking']},
+  'Brightspeed':             {b:[0,0,0,1,1,0,2],s:[0,0,0,0,0,0,0], t:['Dash Cam','Fuel Management']},
   'Frontier Internet':       {b:[1,0,0,3,5,0,0],s:[5,13,13,2,0,0,0],t:[]},
-  'Wrench Group':            {b:[0,0,0,0,0,0,0],s:[0,0,0,0,0,0,0],  t:['Competitors Page','PepsiCo Case Study','Cost Blog']},
+  'Wrench Group':            {b:[0,0,0,0,0,0,0],s:[0,0,0,0,0,0,0], t:['Competitors Page','PepsiCo Case Study','Cost Blog']},
 };
 
 var HUB={
@@ -273,7 +274,7 @@ var PERSONAS={
 };
 
 var DEAL={
-  'BrightView Landscapes':{stage:'75% Negotiations',cls:'ds75',pcls:'s75',fleet:17000,mrr:156582,contacts:['Pat Hunt — VP Fleet','Shayn Spingler — CIO','Jody Suiter — Dir Fleet Ops'],one2one:true,gifts:true},
+  'BrightView Landscapes':{stage:'75% Negotiations',cls:'ds75',pcls:'s75',fleet:17000,mrr:156582,contacts:['Pat Hunt, VP Fleet','Shayn Spingler, CIO','Jody Suiter, Dir Fleet Ops'],one2one:true,gifts:true},
   'Apex Service Partners':{stage:'75% Negotiations',cls:'ds75',pcls:'s75',fleet:12000,mrr:216000,contacts:[],one2one:false,gifts:false},
   'Terminix/Rentokil':{stage:'75% Negotiating',cls:'ds75',pcls:'s75',fleet:3000,mrr:40000,contacts:[],one2one:false,gifts:false},
   'Schindler Group':{stage:'50% Pilot',cls:'ds50',pcls:'s50',fleet:3000,mrr:45000,contacts:[],one2one:false,gifts:false},
@@ -293,35 +294,35 @@ var DEAL={
 var ZACH={
   name:'Zach Crocombe',role:'Business Development Executive',color:'z',
   accounts:['Johnson & Johnson','BrightView Landscapes','Labcorp','Charter Communications','AT&T','Eli Lilly and Company','Comcast','Brightspeed'],
-  topMovement:'Labcorp — 5 Surge + Signals platform visit (product evaluation)',
+  topMovement:'Labcorp, 5 Surge + Signals platform visit (product evaluation)',
   whatsNew:[
-    '<strong>J&J Samsara cooling (15→3)</strong> — competitive window still warm but narrowing',
-    '<strong>Labcorp visited signals.geotab.com</strong> — this is product evaluation, not awareness browsing',
+    '<strong>J&J Samsara cooling (15→3)</strong>, competitive window still warm but narrowing',
+    '<strong>Labcorp visited signals.geotab.com</strong>, this is product evaluation, not awareness browsing',
     '<strong>BrightView recovering to 2 Surge</strong> after dip. Cost Savings + vehicle inspection keywords new',
-    '<strong>AT&T flagged as potential reseller</strong> — confirm whether engagement is direct fleet vs partner activity',
-    '<strong>Charter: Trimble surged to 46 keyword searches</strong> — evaluating telematics providers broadly',
+    '<strong>AT&T flagged as potential reseller</strong>, confirm whether engagement is direct fleet vs partner activity',
+    '<strong>Charter: Trimble surged to 46 keyword searches</strong>, evaluating telematics providers broadly',
   ],
   actions:[
-    {tier:'urg',title:'Labcorp — Brief to Priority 1 this week',body:'<strong>Raise to Priority 1</strong> — signals.geotab.com visit + 5 Surge is product evaluation behavior. Reach out now: lead with Job Scheduling and Cost Savings (top Bombora topics). Layer in Operation Let\'s Eat.'},
-    {tier:'urg',title:'BrightView — Complete 1:1 brief this week',body:'75% Negotiations deal with gifting live. <strong>This is the only missing activation layer at 75%.</strong> Call Pat Hunt or Shayn Spingler using gifting engagement as the opening.'},
-    {tier:'hi',title:'J&J — Follow up while window is still warm',body:'Samsara eased 15→3, not gone. EV Adoption keyword new. <strong>Call this week</strong> — lead with EV fleet readiness + FIPS advantage. Close with 60-day pilot offer.'},
+    {tier:'urg',title:'Labcorp, Brief to Priority 1 this week',body:'<strong>Raise to Priority 1</strong>, signals.geotab.com visit + 5 Surge is product evaluation behavior. Reach out now: lead with Job Scheduling and Cost Savings (top Bombora topics). Layer in Operation Let\'s Eat.'},
+    {tier:'urg',title:'BrightView, Complete 1:1 brief this week',body:'75% Negotiations deal with gifting live. <strong>This is the only missing activation layer at 75%.</strong> Call Pat Hunt or Shayn Spingler using gifting engagement as the opening.'},
+    {tier:'hi',title:'J&J, Follow up while window is still warm',body:'Samsara eased 15→3, not gone. EV Adoption keyword new. <strong>Call this week</strong>, lead with EV fleet readiness + FIPS advantage. Close with 60-day pilot offer.'},
   ]
 };
 var ONUR={
   name:'Onur Aksan',role:'Business Development Executive',color:'o',
   accounts:['Allied Universal','TruGreen','Walt Disney Imagineering','Cintas','Frontier Internet','Rogers Communications','Alsco Uniforms','Groundworks','Wrench Group'],
-  topMovement:'Cintas — 51 hub clicks (up from 0). Campaigns are converting.',
+  topMovement:'Cintas, 51 hub clicks (up from 0). Campaigns are converting.',
   whatsNew:[
-    '<strong>Cintas jumped to 51 hub clicks</strong> — P4/P5 campaigns working. Visited Field Service Buyers Guide',
-    '<strong>Allied Universal — 7th consecutive week</strong> of signal with zero activation. Now at 6 Surge',
-    '<strong>Walt Disney Imagineering — EV fleet news</strong>: CARB agreement to retire Autopia gas engines by early 2027. Net zero 2030 commitment',
-    '<strong>Wrench Group visited /geotab-vs-competitors/ + PepsiCo case study + cost blog</strong> — flag to Jen for 1:1 program decision',
-    '<strong>TruGreen routing page visit</strong> while 1:1 is live — program working correctly',
+    '<strong>Cintas jumped to 51 hub clicks</strong>, P4/P5 campaigns working. Visited Field Service Buyers Guide',
+    '<strong>Allied Universal, 7th consecutive week</strong> of signal with zero activation. Now at 6 Surge',
+    '<strong>Walt Disney Imagineering, EV fleet news</strong>: CARB agreement to retire Autopia gas engines by early 2027. Net zero 2030 commitment',
+    '<strong>Wrench Group visited /geotab-vs-competitors/ + PepsiCo case study + cost blog</strong>, escalate for a 1:1 program decision',
+    '<strong>TruGreen routing page visit</strong> while 1:1 is live, program working correctly',
   ],
   actions:[
-    {tier:'urg',title:'Allied Universal — Activate brief TODAY',body:'7 weeks of signal, 0 activation. <strong>This cannot continue.</strong> Lead with Driver Risk Assessment for 7.5K security vehicle fleet. Send Operation Let\'s Eat immediately as a bridge while brief is being finalized.'},
-    {tier:'hi',title:'Cintas — Outreach while signal is peaking',body:'51 hub clicks + 3 consecutive Surge weeks + Field Service Buyers Guide visit. <strong>Reach out this week</strong> with competitive displacement (Samsara) angle for 13.5K uniform services fleet.'},
-    {tier:'hi',title:'Wrench Group — Flag to Jen for program decision',body:'Competitors page + PepsiCo case study + cost blog in one session. <strong>Legitimate field service HVAC fleet.</strong> Confirm 1:1 program inclusion before signal cools. Currently 0 impressions in hub.'},
+    {tier:'urg',title:'Allied Universal, Activate brief TODAY',body:'7 weeks of signal, 0 activation. <strong>This cannot continue.</strong> Lead with Driver Risk Assessment for 7.5K security vehicle fleet. Send Operation Let\'s Eat immediately as a bridge while brief is being finalized.'},
+    {tier:'hi',title:'Cintas, Outreach while signal is peaking',body:'51 hub clicks + 3 consecutive Surge weeks + Field Service Buyers Guide visit. <strong>Reach out this week</strong> with competitive displacement (Samsara) angle for 13.5K uniform services fleet.'},
+    {tier:'hi',title:'Wrench Group, Escalate for a program decision',body:'Competitors page + PepsiCo case study + cost blog in one session. <strong>Legitimate field service HVAC fleet.</strong> Decide on 1:1 program inclusion before signal cools. Currently 0 impressions in hub.'},
   ]
 };
 function buildRepPanel(rep,panelId){
