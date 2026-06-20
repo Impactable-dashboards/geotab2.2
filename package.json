@@ -1,6 +1,7 @@
 {
   "private": true,
   "dependencies": {
+    "@anthropic-ai/sdk": "latest",
     "@vercel/functions": "latest"
   }
 }

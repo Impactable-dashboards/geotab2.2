@@ -120,6 +120,7 @@
       '.__ad_a b{color:'+C.bone+';font-weight:700;}'+
       '.__ad_a + .__ad_a{margin-top:-4px;border-left-color:'+C.court+';}'+
       '.__ad_tag{font-family:"JetBrains Mono",monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:'+C.chalk+';opacity:.55;margin-bottom:7px;}'+
+      '.__ad_pend{opacity:.9}.__ad_dots{display:inline-flex;gap:5px;align-items:center;padding:2px 0}.__ad_dots i{width:6px;height:6px;border-radius:50%;background:'+C.chalk+';animation:__ad_b 1s infinite ease-in-out}.__ad_dots i:nth-child(2){animation-delay:.15s}.__ad_dots i:nth-child(3){animation-delay:.3s}@keyframes __ad_b{0%,80%,100%{transform:scale(.7);opacity:.4}40%{transform:scale(1);opacity:.95}}'+
       '.__ad_src{display:inline-block;margin-top:10px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:'+C.blue+';text-decoration:none;}'+
       '.__ad_src:hover{text-decoration:underline;}'+
       '#__ad_form{display:flex;gap:8px;padding:14px 16px;border-top:1px solid '+C.court+';background:'+C.concrete+';}'+
@@ -160,13 +161,31 @@
     }
     function fallback(){ addA('I can only answer from what is in this room, and I do not see that here. Try one of these, or rephrase:'+chipsHTML()); scroll(); }
 
-    function ask(text){ text=(text||'').trim(); if(!text) return; addQ(text);
+    function localAnswer(text){
       var nq=uniq(tok(text)).length;
       var cm=matchCurated(text);
       if(cm && cm.score>=2 && cm.score>=nq){ answerCurated(cm.entry); return; }
       var r=retrieve(text);
       if(r.length && r[0].sc>=MIN && r[0].mx>=FLOOR){ answerChunks(r); return; }
       fallback();
+    }
+    function addPending(){ var d=document.createElement('div'); d.className='__ad_a __ad_pend'; d.innerHTML='<span class="__ad_dots"><i></i><i></i><i></i></span>'; body.appendChild(d); scroll(); return d; }
+    function answerLive(text, ans){
+      var src='', r=retrieve(text);
+      if(r.length && r[0].sc>=MIN && r[0].mx>=FLOOR){ var c=CORPUS[r[0].i]; src='<a class="__ad_src" href="'+c.src+'">&rarr; '+c.sl+'</a>'; }
+      addA('<div class="__ad_tag">Answered live from this room</div>'+esc(ans)+src); scroll();
+    }
+    /* Primary path: Claude over the room's content via /api/ask. Falls back to the
+       built-in deterministic engine if the endpoint is unset, slow, or errors. */
+    function ask(text){ text=(text||'').trim(); if(!text) return; addQ(text);
+      var pend=addPending(), done=false;
+      var ctrl=('AbortController' in window)?new AbortController():null;
+      function fin(fn){ if(done)return; done=true; clearTimeout(to); pend.remove(); fn(); }
+      var to=setTimeout(function(){ if(ctrl){try{ctrl.abort();}catch(e){}} fin(function(){ localAnswer(text); }); }, 24000);
+      fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({q:text}),signal:ctrl?ctrl.signal:undefined})
+        .then(function(r){ return r.ok?r.json():Promise.reject(0); })
+        .then(function(d){ fin(function(){ if(d&&d.answer){ answerLive(text,d.answer); } else { localAnswer(text); } }); })
+        .catch(function(){ fin(function(){ localAnswer(text); }); });
     }
 
     body.addEventListener('click', function(ev){ var c=ev.target.closest('.__ad_chip'); if(c){ var e=byId(c.getAttribute('data-id')); addQ(e.q); answerCurated(e); scroll(); } });
