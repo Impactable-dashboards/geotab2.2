@@ -515,6 +515,7 @@ function showRoom(){document.getElementById('gate').style.display='none';documen
 function checkPw(){sha256(document.getElementById('pw').value).then(function(h){if(h===HASH){try{sessionStorage.setItem('implab','1');}catch(e){}showRoom();}else{var e=document.getElementById('err');e.style.display='block';document.getElementById('pw').value='';document.getElementById('pw').focus();}});}
 showRoom();
 </script>
+<script defer src="/ask-index.js"></script>
 <script defer src="/ask.js"></script>
 </body>
 </html>

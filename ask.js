@@ -1,12 +1,16 @@
-/* Ask the data — deterministic NL matcher over the verified EBR figures.
-   Client-side only. No external calls, no live feed: answers can only ever be
-   the verified numbers behind this review. Shared across surfaces via /ask.js. */
+/* Ask the data — grounded Q&A for the Operating Room.
+   Two grounded layers, no LLM, no external calls, no live feed:
+     1) Curated answers for the key verified facts (figures all live in the room).
+     2) Full-room retrieval (BM25) over ask-index.js — returns the ACTUAL passage
+        from the room, so it can only ever answer with what is genuinely there.
+   If nothing in the room matches, it says so. It never fabricates. */
 (function () {
   if (window.__askData) return; window.__askData = 1;
   try {
     var C = { asphalt:'#0A0A0C', concrete:'#15151A', court:'#22222A', bone:'#F4F1EA', chalk:'#C8C4B8', blue:'#1B9BD1', canopy:'#D4FF3D' };
 
-    /* Verified knowledge base. Every figure here matches the EBR spine. */
+    /* Curated answers for the questions leadership is most likely to ask.
+       Every figure here is verified and appears in the room. */
     var DATA = [
       { id:'spend', q:'Total spend YTD', kw:'spend spent invest investment investing budget total ytd year date money dollars overall program much',
         a:'<b>$377,570</b> in verified LinkedIn investment YTD across four regions, weighted <b>68 / 27 / 6</b> top to bottom of funnel. Over the trailing 90 days the mix runs hotter on conversion at <b>64 / 27 / 10</b>.', src:'/program', sl:'Program Performance' },
@@ -36,7 +40,7 @@
         a:'The Field Service ABM motion: orchestrated, signal-led, full-funnel, and feeding sales. It is the model we would build from scratch, already running, and the blueprint for everything the plan scales.', src:'/executive', sl:'Executive Review' },
       { id:'creative', q:'What resonates', kw:'creative message messaging angle angles copy resonate convert winning brand outcome savings',
         a:'Cost-savings and outcome angles consistently beat generic brand, lines like <b>$400+ per vehicle</b> and <b>cut maintenance 20%</b>. The open-versus-closed platform line is the clearest white space against Samsara.', src:'/creative', sl:'Message &amp; Creative' },
-      { id:'samsara', q:'Beating Samsara', kw:'samsara competitor competitive conquest displacement versus vs open closed against',
+      { id:'samsara', q:'Beating Samsara', kw:'samsara competitor competitive conquest displacement versus vs open closed against beat win',
         a:'The conquest angle is open versus closed: Geotab&rsquo;s open platform against a closed one. <b>Safety and Compliance</b> is the net-new buying committee Samsara targets, and the place to deepen.', src:'/segments', sl:'Audience &amp; Segments' },
       { id:'plan', q:'The plan', kw:'plan moves recommendation recommend path forward steps strategy asks three',
         a:'Three moves. <b>1.</b> Rebalance the funnel and catch the search intent. <b>2.</b> Connect the measurement layer, DemandSense into Salesforce. <b>3.</b> Pilot person-level resolution (WebID) on the highest-intent accounts. Each compounds spend already in market.', src:'/orchestration', sl:'The Orchestration Model' },
@@ -52,28 +56,50 @@
         a:'Spend is verified. Engagement and movement come from LinkedIn Company Hub snapshots, persona breadth from the five campaign streams, and competitive and surge flags from 6sense. EMEA is kept in euros and never summed across currencies.', src:'/program', sl:'Program Performance' }
     ];
     var SUGGEST = ['spend','region','funnel','coverage','search','plan'];
+    function byId(id){ for(var i=0;i<DATA.length;i++){ if(DATA[i].id===id) return DATA[i]; } return null; }
 
     var STOP = {};
-    ('the a an of to in on for is are was we our us your you i how what which who when where why by and or with that this it as at be do does did show tell about can give get me my has have had will would should could than then so out over under into per s t re ve much there here their them'
+    ('the a an of to in on for is are was we our us your you i how what which who when where why by and or with that this it as at be do does did show tell about can give get me my has have had will would should could than then so out over under into per s t re ve much there here their them today now currently recently latest happened happening going just really actually like want need see look'
       ).split(' ').forEach(function (w) { STOP[w] = 1; });
+    function tok(s){ return (s||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim().split(' ').filter(function(t){return t && !STOP[t];}); }
+    function uniq(a){ var s={}, o=[]; for(var i=0;i<a.length;i++){ if(!s[a[i]]){ s[a[i]]=1; o.push(a[i]); } } return o; }
 
-    function tok(s){ return s.toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim().split(' ').filter(function(t){return t && !STOP[t];}); }
-    var INDEX = DATA.map(function(e){ var set={}; tok(e.kw+' '+e.q).forEach(function(t){set[t]=1;}); return set; });
-    function match(query){
-      var qs = tok(query); if(!qs.length) return null;
-      var best=-1, bi=-1;
-      for(var i=0;i<DATA.length;i++){
-        var set=INDEX[i], sc=0;
-        for(var j=0;j<qs.length;j++){
-          var t=qs[j];
+    /* Curated matcher */
+    var CIDX = DATA.map(function(e){ var set={}; tok(e.kw+' '+e.q).forEach(function(t){set[t]=1;}); return set; });
+    function matchCurated(query){
+      var qs=tok(query); if(!qs.length) return null; var best=-1, bi=-1;
+      for(var i=0;i<DATA.length;i++){ var set=CIDX[i], sc=0;
+        for(var j=0;j<qs.length;j++){ var t=qs[j];
           if(set[t]){ sc+=2; continue; }
-          for(var k in set){ if(k.length>3 && (k.indexOf(t)===0 || t.indexOf(k)===0)){ sc+=1; break; } }
-        }
-        if(sc>best){ best=sc; bi=i; }
-      }
-      return best>=2 ? DATA[bi] : null;
+          for(var k in set){ if(k.length>3 && (k.indexOf(t)===0 || t.indexOf(k)===0)){ sc+=1; break; } } }
+        if(sc>best){ best=sc; bi=i; } }
+      return { entry:DATA[bi], score:best };
     }
 
+    /* Retrieval over the room's actual content (BM25) */
+    var CORPUS = window.__ASK_INDEX || [];
+    var DF={}, DOC=[], AVG=0;
+    for(var c=0;c<CORPUS.length;c++){ var tks=tok(CORPUS[c].t), tf={}, uq={};
+      for(var x=0;x<tks.length;x++){ tf[tks[x]]=(tf[tks[x]]||0)+1; uq[tks[x]]=1; }
+      DOC.push({tf:tf,len:tks.length||1}); AVG+=tks.length;
+      for(var u in uq){ DF[u]=(DF[u]||0)+1; } }
+    AVG = AVG/(CORPUS.length||1);
+    function idf(t){ var d=DF[t]||0; return Math.log(1+(CORPUS.length-d+0.5)/(d+0.5)); }
+    function retrieve(query){
+      var qt=uniq(tok(query)); if(!qt.length || !CORPUS.length) return [];
+      var k1=1.4,b=0.75,res=[];
+      for(var c=0;c<CORPUS.length;c++){ var doc=DOC[c], sc=0, mx=0;
+        for(var t=0;t<qt.length;t++){ var f=doc.tf[qt[t]]||0; if(!f) continue;
+          var id=idf(qt[t]); if(id>mx) mx=id;
+          sc += id * (f*(k1+1))/(f + k1*(1-b+b*doc.len/AVG)); }
+        if(sc>0) res.push({i:c, sc:sc, mx:mx}); }
+      res.sort(function(a,b){ return b.sc-a.sc; });
+      return res;
+    }
+    var MIN = 2.0;    /* min BM25 score to answer from the room */
+    var FLOOR = 3.0;  /* require a distinctive (non-common) term match */
+
+    /* UI */
     var css = ''+
       '#__ad_launch{position:fixed;bottom:24px;right:24px;z-index:9998;display:flex;align-items:center;gap:9px;background:'+C.concrete+';color:'+C.bone+';border:1px solid '+C.court+';border-radius:999px;padding:12px 18px;font-family:Inter,sans-serif;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 8px 28px rgba(0,0,0,.45);transition:border-color .18s,transform .18s;}'+
       '#__ad_launch:hover{border-color:'+C.blue+';transform:translateY(-2px);}'+
@@ -82,7 +108,7 @@
       '#__ad_panel[hidden]{display:none;}'+
       '#__ad_head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid '+C.court+';background:'+C.concrete+';}'+
       '#__ad_title{font-family:"Archivo Black",sans-serif;font-size:15px;color:'+C.bone+';letter-spacing:-.01em;}'+
-      '#__ad_sub{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:'+C.chalk+';opacity:.6;margin-top:3px;}'+
+      '#__ad_sub{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:'+C.chalk+';opacity:.6;margin-top:3px;}'+
       '#__ad_close{background:none;border:none;color:'+C.chalk+';font-size:16px;cursor:pointer;opacity:.6;padding:4px;line-height:1;}#__ad_close:hover{opacity:1;}'+
       '#__ad_body{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;}'+
       '.__ad_greet{font-size:13.5px;color:'+C.chalk+';line-height:1.6;}'+
@@ -90,8 +116,10 @@
       '.__ad_chip{background:rgba(27,155,209,.07);border:1px solid rgba(27,155,209,.28);color:'+C.bone+';border-radius:999px;padding:7px 13px;font-size:12px;cursor:pointer;font-family:Inter,sans-serif;transition:border-color .15s,background .15s;}'+
       '.__ad_chip:hover{border-color:'+C.blue+';background:rgba(27,155,209,.16);}'+
       '.__ad_q{align-self:flex-end;max-width:85%;background:'+C.blue+';color:#fff;border-radius:12px 12px 2px 12px;padding:9px 13px;font-size:13px;line-height:1.45;}'+
-      '.__ad_a{align-self:flex-start;max-width:92%;background:'+C.concrete+';border:1px solid '+C.court+';border-left:2px solid '+C.canopy+';border-radius:2px 12px 12px 12px;padding:13px 15px;font-size:13.5px;color:'+C.chalk+';line-height:1.6;}'+
+      '.__ad_a{align-self:flex-start;max-width:94%;background:'+C.concrete+';border:1px solid '+C.court+';border-left:2px solid '+C.canopy+';border-radius:2px 12px 12px 12px;padding:13px 15px;font-size:13.5px;color:'+C.chalk+';line-height:1.6;}'+
       '.__ad_a b{color:'+C.bone+';font-weight:700;}'+
+      '.__ad_a + .__ad_a{margin-top:-4px;border-left-color:'+C.court+';}'+
+      '.__ad_tag{font-family:"JetBrains Mono",monospace;font-size:8.5px;letter-spacing:.12em;text-transform:uppercase;color:'+C.chalk+';opacity:.55;margin-bottom:7px;}'+
       '.__ad_src{display:inline-block;margin-top:10px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:'+C.blue+';text-decoration:none;}'+
       '.__ad_src:hover{text-decoration:underline;}'+
       '#__ad_form{display:flex;gap:8px;padding:14px 16px;border-top:1px solid '+C.court+';background:'+C.concrete+';}'+
@@ -104,7 +132,7 @@
     root.innerHTML =
       '<button id="__ad_launch" aria-label="Ask the data"><span class="d"></span> Ask the data</button>'+
       '<div id="__ad_panel" role="dialog" aria-label="Ask the data" hidden>'+
-        '<div id="__ad_head"><div><div id="__ad_title">Ask the data</div><div id="__ad_sub">Verified figures behind this review</div></div><button id="__ad_close" aria-label="Close">&times;</button></div>'+
+        '<div id="__ad_head"><div><div id="__ad_title">Ask the data</div><div id="__ad_sub">Answers only from this room</div></div><button id="__ad_close" aria-label="Close">&times;</button></div>'+
         '<div id="__ad_body"></div>'+
         '<form id="__ad_form"><input id="__ad_input" type="text" placeholder="Ask a question…" autocomplete="off" aria-label="Ask a question"><button id="__ad_send" type="submit" aria-label="Send">&rarr;</button></form>'+
       '</div>';
@@ -114,27 +142,39 @@
         input=root.querySelector('#__ad_input'), form=root.querySelector('#__ad_form'),
         launch=root.querySelector('#__ad_launch'), greeted=false;
 
+    function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
     function chipsHTML(){ return '<div class="__ad_chips">'+SUGGEST.map(function(id){var e=byId(id);return '<button class="__ad_chip" data-id="'+id+'">'+e.q+'</button>';}).join('')+'</div>'; }
-    function byId(id){ for(var i=0;i<DATA.length;i++){ if(DATA[i].id===id) return DATA[i]; } return null; }
-    function greet(){ if(greeted) return; greeted=true;
-      var g=document.createElement('div'); g.className='__ad_greet';
-      g.innerHTML='Ask a question about the program. Answers use the verified figures behind this review.'+chipsHTML();
-      body.appendChild(g);
-    }
+    function greet(){ if(greeted) return; greeted=true; var g=document.createElement('div'); g.className='__ad_greet';
+      g.innerHTML='Ask anything covered in this room. I answer only from what is here, and I will tell you if something is not.'+chipsHTML(); body.appendChild(g); }
     function scroll(){ body.scrollTop=body.scrollHeight; }
     function addQ(t){ var d=document.createElement('div'); d.className='__ad_q'; d.textContent=t; body.appendChild(d); }
     function addA(html){ var d=document.createElement('div'); d.className='__ad_a'; d.innerHTML=html; body.appendChild(d); }
-    function answer(e){ addA(e.a+'<br><a class="__ad_src" href="'+e.src+'">&rarr; '+e.sl+'</a>'); scroll(); }
-    function fallback(){ addA('I can answer questions on spend, regions, the funnel, account coverage, search intent, pipeline, creative, and the plan. Try one of these:'+chipsHTML()); scroll(); }
+    function answerCurated(e){ addA(e.a+'<a class="__ad_src" href="'+e.src+'">&rarr; '+e.sl+'</a>'); scroll(); }
+    function answerChunks(r){
+      var top=[], used={};
+      for(var i=0;i<r.length && top.length<2;i++){ if(r[i].sc < r[0].sc*0.5) break; var ch=CORPUS[r[i].i];
+        if(used[ch.src+ch.t]) continue; used[ch.src+ch.t]=1; top.push(ch); }
+      for(var j=0;j<top.length;j++){ var c=top[j];
+        addA((j===0?'<div class="__ad_tag">From the room</div>':'')+esc(c.t)+'<a class="__ad_src" href="'+c.src+'">&rarr; '+c.sl+'</a>'); }
+      scroll();
+    }
+    function fallback(){ addA('I can only answer from what is in this room, and I do not see that here. Try one of these, or rephrase:'+chipsHTML()); scroll(); }
 
-    function ask(text){ text=(text||'').trim(); if(!text) return; addQ(text); var e=match(text); if(e) answer(e); else fallback(); }
+    function ask(text){ text=(text||'').trim(); if(!text) return; addQ(text);
+      var nq=uniq(tok(text)).length;
+      var cm=matchCurated(text);
+      if(cm && cm.score>=2 && cm.score>=nq){ answerCurated(cm.entry); return; }
+      var r=retrieve(text);
+      if(r.length && r[0].sc>=MIN && r[0].mx>=FLOOR){ answerChunks(r); return; }
+      fallback();
+    }
 
-    body.addEventListener('click', function(ev){ var c=ev.target.closest('.__ad_chip'); if(c){ var e=byId(c.getAttribute('data-id')); addQ(e.q); answer(e); } });
+    body.addEventListener('click', function(ev){ var c=ev.target.closest('.__ad_chip'); if(c){ var e=byId(c.getAttribute('data-id')); addQ(e.q); answerCurated(e); scroll(); } });
     form.addEventListener('submit', function(ev){ ev.preventDefault(); ask(input.value); input.value=''; });
-    function open(){ panel.hidden=false; greet(); setTimeout(function(){input.focus();},40); }
-    function close(){ panel.hidden=true; }
-    launch.addEventListener('click', function(){ panel.hidden ? open() : close(); });
-    root.querySelector('#__ad_close').addEventListener('click', close);
-    document.addEventListener('keydown', function(ev){ if(ev.key==='Escape' && !panel.hidden) close(); });
+    function openP(){ panel.hidden=false; greet(); setTimeout(function(){input.focus();},40); }
+    function closeP(){ panel.hidden=true; }
+    launch.addEventListener('click', function(){ panel.hidden ? openP() : closeP(); });
+    root.querySelector('#__ad_close').addEventListener('click', closeP);
+    document.addEventListener('keydown', function(ev){ if(ev.key==='Escape' && !panel.hidden) closeP(); });
   } catch (e) { /* never break the page */ }
 })();
