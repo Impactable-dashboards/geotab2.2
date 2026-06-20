@@ -19,6 +19,7 @@ const FILES = [
   ['top25', 'Top 25 Exec Prep', '/top25'],
   ['detail/6sense-trend', '6sense Surge Report', '/detail/6sense-trend'],
   ['detail/channel-efficiency', 'Channel Efficiency', '/detail/channel-efficiency'],
+  ['detail/account-hierarchy', 'Account Hierarchy', '/detail/account-hierarchy'],
   ['detail/segments-full', 'Audience Segments (detail)', '/detail/segments-full'],
   ['detail/creative-full', 'Messaging & Creative (detail)', '/detail/creative-full'],
   ['detail/campaign-performance', 'Campaign Performance', '/detail/campaign-performance'],
